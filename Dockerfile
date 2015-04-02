@@ -29,6 +29,7 @@ RUN wget https://pbs.twimg.com/profile_images/378800000472707746/f27856ed3dcd6d7
 COPY rewrite.pl /usr/local/bin/rewrite.pl
 COPY tourette.pl /usr/local/bin/tourette.pl
 COPY ascii.pl /usr/local/bin/ascii.pl
+COPY watermark.pl /usr/local/bin/watermark.pl
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
