@@ -1,0 +1,13 @@
+[Unit]
+Description=April Fools Squid Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker pull dmegyesi/aprilfoolsproxy
+ExecStart=/usr/bin/docker run --name aprilfoolsproxy -d -i -t -p 3128:3128 dmegyesi/aprilfoolsproxy
+ExecStopPre=/usr/bin/docker kill aprilfoolsproxy
+ExecStop=/usr/bin/docker rm aprilfoolsproxy
+TimeoutStartSec=0
+Restart=always
+RestartSec=10s

@@ -1,0 +1,13 @@
+[Unit]
+Description=Cadvisor Perfmon Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker pull google/cadvisor:latest
+ExecStart=/usr/bin/docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:rw --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --detach=true --name=cadvisor google/cadvisor:latest
+ExecStopPre=/usr/bin/docker kill cadvisor
+ExecStop=/usr/bin/docker rm cadvisor
+TimeoutStartSec=0
+Restart=always
+RestartSec=10s
