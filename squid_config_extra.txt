@@ -1,0 +1,8 @@
+# substitue for the required script, then reload squid with /etc/init.d/squid reload
+url_rewrite_program /usr/local/bin/rewrite.pl
+url_rewrite_children 20
+
+cache_dir ufs /usr/local/squid/var/cache_liligo 1024 16 256
+cache_store_log none
+
+access_log none
