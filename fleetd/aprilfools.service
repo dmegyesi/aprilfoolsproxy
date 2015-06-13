@@ -4,10 +4,25 @@ After=docker.service
 Requires=docker.service
 
 [Service]
+ExecStartPre=-/usr/bin/docker kill %p-%I
+ExecStartPre=-/usr/bin/docker rm %p-%i
 ExecStartPre=/usr/bin/docker pull dmegyesi/aprilfoolsproxy
-ExecStart=/usr/bin/docker run --name aprilfoolsproxy -d -i -t -p 3128:3128 dmegyesi/aprilfoolsproxy
-ExecStopPre=/usr/bin/docker kill aprilfoolsproxy
-ExecStop=/usr/bin/docker rm aprilfoolsproxy
+
+ExecStart=/usr/bin/docker run --rm --name %p-%i -p 3128 dmegyesi/aprilfoolsproxy
+
+#Service discovery: determine container port number from docker inspect
+ExecStartPost=/bin/sh -c "while true; do etcdctl set /services/aprilfoolsproxy/%n \"%p-%i %H:`docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}}{{(index $conf 0).HostPort}}{{end}}' %p-%i`\" --ttl 60;sleep 45;done"
+
+ExecStop=/usr/bin/docker stop %p-%i
+
+#Service discovery
+ExecStopPost=/bin/sh -c "etcdctl rm /services/aprilfoolsproxy/%n"
+
 TimeoutStartSec=0
 Restart=always
 RestartSec=10s
+
+[X-Fleet]
+# no more conflicts, since we dynamically allocate port numbers and put it in service discovery
+#Conflicts=%p@*.service
+
